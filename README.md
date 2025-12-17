@@ -1,6 +1,6 @@
-# 🚀 CodingSim
+# CodingSimulator
 
-**CodingSim** turns framework documentation into interactive, LeetCode-style coding challenges.
+**CodingSimulator** turns framework documentation into interactive, LeetCode-style coding challenges.
 
 Paste a docs URL, generate questions, write code, run test cases, and submit — all in one clean, game-like interface.
 
@@ -47,3 +47,5 @@ Paste a docs URL, generate questions, write code, run test cases, and submit —
 ```bash
 git clone https://github.com/EmmanuelAzu/CodingSimulator.git
 cd codingsim
+npm install
+npm run dev
