@@ -113,16 +113,24 @@ export default function Home() {
   // Smaller header heights (px) used for editor sizing
   const headerH = headerCollapsed ? 44 : 92;
 
+  // ---- Resizable split (Editor <-> Bottom panel) ----
+  const rightStackRef = useRef(null);
+  const draggingSplitRef = useRef(false);
+  const dragPointerIdRef = useRef(null);
+  const [editorPx, setEditorPx] = useState(null);
+
   // ---- Load prefs ----
   useEffect(() => {
     try {
       const savedLang = localStorage.getItem("cs:language");
       const savedUrl = localStorage.getItem("cs:docsUrl");
       const savedCollapsed = localStorage.getItem("cs:headerCollapsed");
+      const savedEditorPx = localStorage.getItem("cs:editorPx");
 
       if (savedLang) setLanguage(savedLang);
       if (savedUrl) setDocsUrl(savedUrl);
       if (savedCollapsed === "true") setHeaderCollapsed(true);
+      if (savedEditorPx && !Number.isNaN(Number(savedEditorPx))) setEditorPx(Number(savedEditorPx));
     } catch {}
   }, []);
 
@@ -144,6 +152,43 @@ export default function Home() {
       localStorage.setItem("cs:headerCollapsed", String(headerCollapsed));
     } catch {}
   }, [headerCollapsed]);
+
+  useEffect(() => {
+    try {
+      if (typeof editorPx === "number") localStorage.setItem("cs:editorPx", String(editorPx));
+    } catch {}
+  }, [editorPx]);
+
+  // Initialize / clamp editor height when layout changes (first mount + header collapse + window resize)
+  useEffect(() => {
+    const applyDefaultIfNeeded = () => {
+      const el = rightStackRef.current;
+      if (!el) return;
+
+      const total = el.getBoundingClientRect().height;
+      if (!total || total < 200) return;
+
+      const resizerH = 10; // our draggable bar height
+      const minEditor = 180;
+      const minBottom = 180;
+
+      const min = minEditor;
+      const max = Math.max(minEditor, total - resizerH - minBottom);
+
+      setEditorPx((prev) => {
+        if (typeof prev !== "number") {
+          // default: ~55% editor
+          const d = Math.round(total * 0.55);
+          return Math.min(max, Math.max(min, d));
+        }
+        return Math.min(max, Math.max(min, prev));
+      });
+    };
+
+    applyDefaultIfNeeded();
+    window.addEventListener("resize", applyDefaultIfNeeded);
+    return () => window.removeEventListener("resize", applyDefaultIfNeeded);
+  }, [headerH]);
 
   function popToast(msg, ms = 1200) {
     setToast(msg);
@@ -310,6 +355,43 @@ export default function Home() {
     } finally {
       setRunLoading(false);
     }
+  }
+
+  // Drag logic for editor split
+  function onSplitPointerDown(e) {
+    if (!rightStackRef.current) return;
+    draggingSplitRef.current = true;
+    dragPointerIdRef.current = e.pointerId;
+
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+
+  function onSplitPointerMove(e) {
+    if (!draggingSplitRef.current) return;
+    const stack = rightStackRef.current;
+    if (!stack) return;
+
+    const rect = stack.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+
+    const resizerH = 10;
+    const minEditor = 180;
+    const minBottom = 180;
+
+    const min = minEditor;
+    const max = Math.max(minEditor, rect.height - resizerH - minBottom);
+
+    const next = Math.round(Math.min(max, Math.max(min, y)));
+    setEditorPx(next);
+  }
+
+  function onSplitPointerUp(e) {
+    draggingSplitRef.current = false;
+    dragPointerIdRef.current = null;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
   }
 
   return (
@@ -500,11 +582,11 @@ export default function Home() {
                 </div>
 
                 {/* Editor + bottom panel */}
-                <div className="flex-1 min-h-0 flex flex-col">
-                  {/* Editor: give more height */}
+                <div ref={rightStackRef} className="flex-1 min-h-0 flex flex-col">
+                  {/* Editor: resizable height */}
                   <div
                     className="overflow-hidden bg-slate-950 border-b border-slate-200"
-                    style={{ height: `calc((100dvh - ${headerH}px) * 0.52)` }}
+                    style={{ height: typeof editorPx === "number" ? editorPx : undefined }}
                   >
                     <div className="h-8 border-b border-slate-800/70 px-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -548,6 +630,19 @@ export default function Home() {
                         }}
                       />
                     </div>
+                  </div>
+
+                  {/* Drag handle between editor and bottom */}
+                  <div
+                    onPointerDown={onSplitPointerDown}
+                    onPointerMove={onSplitPointerMove}
+                    onPointerUp={onSplitPointerUp}
+                    onPointerCancel={onSplitPointerUp}
+                    className="shrink-0 h-[10px] bg-white border-b border-slate-200 flex items-center justify-center cursor-row-resize select-none"
+                    style={{ touchAction: "none" }}
+                    title="Drag to resize"
+                  >
+                    <div className="h-1 w-16 rounded-full bg-slate-200" />
                   </div>
 
                   {/* Bottom scrollable panel */}
@@ -608,8 +703,11 @@ export default function Home() {
                               ))}
                             </div>
 
-                            <Block title="Example Input">{activeTC?.input || "// missing input"}</Block>
-                            <Block title="Expected Output">
+                            {/* Resizable testcase sections (drag bottom-right corner of each) */}
+                            <Block title="Example Input" resizable>
+                              {activeTC?.input || "// missing input"}
+                            </Block>
+                            <Block title="Expected Output" resizable>
                               {activeTC?.expectedOutput || "// missing expected"}
                             </Block>
 
@@ -793,13 +891,20 @@ function Pill({ active, onClick, children }) {
   );
 }
 
-function Block({ title, children }) {
+function Block({ title, children, resizable = false }) {
   return (
     <div className="space-y-1">
       <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
-      <pre className="rounded-xl bg-slate-50 border border-slate-200 p-2 font-mono text-[11px] text-slate-800 whitespace-pre-wrap">
+      <pre
+        className={[
+          "rounded-xl bg-slate-50 border border-slate-200 p-2 font-mono text-[11px] text-slate-800 whitespace-pre-wrap",
+          resizable ? "resize-y overflow-auto" : "",
+        ].join(" ")}
+        style={resizable ? { minHeight: 84, maxHeight: 420 } : undefined}
+      >
         {children}
       </pre>
+      {resizable ? <div className="text-[10px] text-slate-400">Drag the corner to resize</div> : null}
     </div>
   );
 }
