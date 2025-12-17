@@ -42,7 +42,7 @@ function starterMatchesLanguage(starterCode, lang) {
 
 function CoolLogo() {
   return (
-    <div className="h-9 w-9 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-white">
+    <div className="h-8 w-8 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
       <svg viewBox="0 0 64 64" className="h-full w-full">
         <defs>
           <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -110,8 +110,8 @@ export default function Home() {
 
   const toastTimer = useRef(null);
 
-  // Approx header heights (px) used for editor sizing
-  const headerH = headerCollapsed ? 56 : 124;
+  // Smaller header heights (px) used for editor sizing
+  const headerH = headerCollapsed ? 44 : 92;
 
   // ---- Load prefs ----
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Home() {
     } catch {}
   }, [headerCollapsed]);
 
-  function popToast(msg, ms = 1400) {
+  function popToast(msg, ms = 1200) {
     setToast(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(""), ms);
@@ -217,8 +217,7 @@ export default function Home() {
     return Array.isArray(tc) ? tc : [];
   }, [currentQuestion]);
 
-  const activeTC =
-    testCases[Math.min(activeCaseIndex, Math.max(0, testCases.length - 1))];
+  const activeTC = testCases[Math.min(activeCaseIndex, Math.max(0, testCases.length - 1))];
 
   function handleReset() {
     const sc = currentQuestion?.starterCode || "";
@@ -317,21 +316,21 @@ export default function Home() {
     <main className={`${inter.className} h-[100dvh] bg-slate-50 text-slate-900 flex flex-col`}>
       {/* Collapsible header */}
       <header className="shrink-0 border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="py-2.5 flex items-center justify-between gap-2">
+        <div className="mx-auto max-w-7xl px-2 sm:px-3">
+          <div className="py-1.5 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <CoolLogo />
               <div className="min-w-0 leading-tight">
-                <div className="text-sm font-extrabold tracking-tight truncate">
+                <div className="text-[13px] font-extrabold tracking-tight truncate">
                   Coding<span className="text-indigo-600">Sim</span>
                 </div>
-                <div className="text-[11px] text-slate-500 hidden sm:block">
+                <div className="text-[10px] text-slate-500 hidden sm:block">
                   Ctrl/Cmd+Enter = Run • Ctrl/Cmd+Shift+Enter = Submit
                 </div>
               </div>
 
               {currentQuestion && (
-                <span className={`ml-2 px-2 py-1 rounded-full text-[11px] font-semibold border ${meta.chip}`}>
+                <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${meta.chip}`}>
                   {meta.label}
                 </span>
               )}
@@ -340,7 +339,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setHeaderCollapsed((v) => !v)}
-              className="shrink-0 rounded-xl px-3 py-2 text-xs font-semibold bg-slate-100 border border-slate-200 hover:bg-slate-200"
+              className="shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold bg-slate-100 border border-slate-200 hover:bg-slate-200"
               title={headerCollapsed ? "Expand" : "Collapse"}
             >
               {headerCollapsed ? "▼" : "▲"}
@@ -348,7 +347,7 @@ export default function Home() {
           </div>
 
           {!headerCollapsed && (
-            <div className="pb-3">
+            <div className="pb-2">
               <form onSubmit={handleGenerate} className="w-full">
                 <div className="flex gap-2">
                   <input
@@ -356,20 +355,20 @@ export default function Home() {
                     value={docsUrl}
                     onChange={(e) => setDocsUrl(e.target.value)}
                     placeholder="https://react.dev/reference/react/useState"
-                    className="flex-1 rounded-xl bg-white border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
+                    className="flex-1 rounded-lg bg-white border border-slate-200 px-2.5 py-1.5 text-[11px] focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
                   />
                   <button
                     type="submit"
                     disabled={loading}
-                    className="rounded-xl px-3.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60"
+                    className="rounded-lg px-3 py-1.5 text-[11px] font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60"
                   >
                     {loading ? "..." : "Generate 5"}
                   </button>
                 </div>
 
                 <div className="mt-1 flex items-center justify-between">
-                  <div className="text-[11px] text-rose-600">{error}</div>
-                  <div className="text-[11px] text-slate-500 hidden sm:block">
+                  <div className="text-[10px] text-rose-600">{error}</div>
+                  <div className="text-[10px] text-slate-500 hidden sm:block">
                     Tip: focused docs pages work best
                   </div>
                 </div>
@@ -381,8 +380,8 @@ export default function Home() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50">
-          <div className="rounded-full bg-slate-900 text-white text-xs px-3 py-1.5 shadow">
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 z-50">
+          <div className="rounded-full bg-slate-900 text-white text-[11px] px-3 py-1 shadow">
             {toast}
           </div>
         </div>
@@ -391,16 +390,16 @@ export default function Home() {
       {/* Main */}
       <div className="flex-1 min-h-0">
         {currentQuestion ? (
-          <div className="h-full mx-auto max-w-7xl px-3 sm:px-4 py-3 flex flex-col gap-3">
+          <div className="h-full mx-auto max-w-7xl px-2 sm:px-3 py-2 flex flex-col gap-2">
             {/* Q selector */}
-            <div className="shrink-0 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <div className="shrink-0 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 {questions.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setSelectedIndex(i)}
                     className={[
-                      "shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold border transition",
+                      "shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition",
                       i === selectedIndex
                         ? "bg-slate-900 text-white border-slate-900"
                         : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50",
@@ -413,7 +412,7 @@ export default function Home() {
 
               <div className="shrink-0 flex items-center gap-2">
                 <select
-                  className="bg-white border border-slate-200 text-xs rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
+                  className="bg-white border border-slate-200 text-[11px] rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
                   title="Language"
@@ -423,57 +422,57 @@ export default function Home() {
                   <option value="python">Python</option>
                 </select>
 
-                <div className="hidden md:block text-[11px] text-slate-500 truncate max-w-[420px]">
+                <div className="hidden md:block text-[10px] text-slate-500 truncate max-w-[420px]">
                   {currentQuestion.title || `Question ${selectedIndex + 1}`}
                 </div>
               </div>
             </div>
 
             {/* Two panes */}
-            <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1.2fr)] gap-3">
+            <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1.2fr)] gap-2">
               {/* LEFT */}
               <section className="min-h-0 rounded-2xl bg-white border border-slate-200 overflow-hidden flex flex-col">
-                <div className="shrink-0 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                  <div className="text-sm font-bold">Description</div>
-                  <div className="text-[11px] text-slate-500">
+                <div className="shrink-0 px-3 py-2 border-b border-slate-200 flex items-center justify-between">
+                  <div className="text-[13px] font-bold">Description</div>
+                  <div className="text-[10px] text-slate-500">
                     {selectedIndex + 1}/{questions.length}
                   </div>
                 </div>
 
-                <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-4">
-                  <h2 className="text-base font-extrabold tracking-tight">
+                <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 space-y-3">
+                  <h2 className="text-sm font-extrabold tracking-tight">
                     {currentQuestion.title || `Question ${selectedIndex + 1}`}
                   </h2>
 
                   {currentQuestion.concept && (
-                    <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-3">
-                      <div className="text-[11px] font-bold text-indigo-700">Concept</div>
-                      <p className="text-sm text-slate-700 whitespace-pre-line mt-1 leading-relaxed">
+                    <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-2.5">
+                      <div className="text-[10px] font-bold text-indigo-700">Concept</div>
+                      <p className="text-[13px] text-slate-700 whitespace-pre-line mt-1 leading-snug">
                         {currentQuestion.concept}
                       </p>
                     </div>
                   )}
 
                   <div>
-                    <div className="text-[11px] font-bold text-slate-600">Problem</div>
-                    <p className="text-sm text-slate-800 whitespace-pre-line mt-1 leading-relaxed">
+                    <div className="text-[10px] font-bold text-slate-600">Problem</div>
+                    <p className="text-[13px] text-slate-800 whitespace-pre-line mt-1 leading-snug">
                       {currentQuestion.question}
                     </p>
                   </div>
 
                   {currentQuestion.instructions && (
-                    <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-3">
-                      <div className="text-[11px] font-bold text-emerald-700">Task</div>
-                      <p className="text-sm text-slate-700 mt-1 leading-relaxed">
+                    <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-2.5">
+                      <div className="text-[10px] font-bold text-emerald-700">Task</div>
+                      <p className="text-[13px] text-slate-700 mt-1 leading-snug">
                         {currentQuestion.instructions}
                       </p>
                     </div>
                   )}
 
                   {currentQuestion.hints?.length > 0 && (
-                    <div className="rounded-xl bg-amber-50 border border-amber-100 p-3">
-                      <div className="text-[11px] font-bold text-amber-700">Hints</div>
-                      <ul className="mt-1 list-disc list-inside space-y-1 text-sm text-slate-700">
+                    <div className="rounded-xl bg-amber-50 border border-amber-100 p-2.5">
+                      <div className="text-[10px] font-bold text-amber-700">Hints</div>
+                      <ul className="mt-1 list-disc list-inside space-y-1 text-[13px] text-slate-700">
                         {currentQuestion.hints.map((h, i) => (
                           <li key={i}>{h}</li>
                         ))}
@@ -486,41 +485,42 @@ export default function Home() {
               {/* RIGHT */}
               <section className="min-h-0 rounded-2xl bg-white border border-slate-200 overflow-hidden flex flex-col">
                 {/* Editor header */}
-                <div className="shrink-0 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                <div className="shrink-0 px-3 py-2 border-b border-slate-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="text-sm font-bold">Code</div>
-                    <span className="text-[11px] text-slate-500 font-mono">{fileLabel}</span>
+                    <div className="text-[13px] font-bold">Code</div>
+                    <span className="text-[10px] text-slate-500 font-mono">{fileLabel}</span>
                   </div>
 
                   <button
-                    className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"
+                    className="text-[11px] px-2 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"
                     onClick={handleReset}
                   >
                     Reset
                   </button>
                 </div>
 
-                {/* Editor fixed at 45% viewport height */}
+                {/* Editor + bottom panel */}
                 <div className="flex-1 min-h-0 flex flex-col">
+                  {/* Editor: give more height */}
                   <div
                     className="overflow-hidden bg-slate-950 border-b border-slate-200"
-                    style={{ height: `calc((100dvh - ${headerH}px) * 0.45)` }}
+                    style={{ height: `calc((100dvh - ${headerH}px) * 0.52)` }}
                   >
-                    <div className="h-9 border-b border-slate-800/70 px-3 flex items-center justify-between">
+                    <div className="h-8 border-b border-slate-800/70 px-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
-                        <span className="ml-2 text-[11px] text-slate-300 font-mono">
+                        <span className="h-2 w-2 rounded-full bg-rose-400" />
+                        <span className="h-2 w-2 rounded-full bg-amber-300" />
+                        <span className="h-2 w-2 rounded-full bg-emerald-300" />
+                        <span className="ml-2 text-[10px] text-slate-300 font-mono">
                           implement <span className="text-sky-300">solve</span>(input)
                         </span>
                       </div>
-                      <div className="text-[11px] text-slate-400 hidden sm:block">
-                        Run = visible tests • Submit = visible + hidden ({hiddenTestCases.length})
+                      <div className="text-[10px] text-slate-400 hidden sm:block">
+                        Run = visible • Submit = visible + hidden ({hiddenTestCases.length})
                       </div>
                     </div>
 
-                    <div className="h-[calc(100%-36px)] min-h-0">
+                    <div className="h-[calc(100%-32px)] min-h-0">
                       <Editor
                         height="100%"
                         language={monacoLang}
@@ -529,20 +529,21 @@ export default function Home() {
                         theme="vs-dark"
                         options={{
                           minimap: { enabled: false },
-                          fontSize: 13,
+                          fontSize: 12,
+                          lineHeight: 18,
                           fontLigatures: true,
                           wordWrap: "on",
                           scrollBeyondLastLine: false,
                           smoothScrolling: true,
-                          padding: { top: 12, bottom: 12 },
+                          padding: { top: 8, bottom: 8 },
                           cursorBlinking: "smooth",
                           cursorSmoothCaretAnimation: "on",
                           roundedSelection: true,
                           renderLineHighlight: "all",
                           bracketPairColorization: { enabled: true },
                           scrollbar: {
-                            verticalScrollbarSize: 10,
-                            horizontalScrollbarSize: 10,
+                            verticalScrollbarSize: 8,
+                            horizontalScrollbarSize: 8,
                           },
                         }}
                       />
@@ -552,25 +553,25 @@ export default function Home() {
                   {/* Bottom scrollable panel */}
                   <div className="flex-1 min-h-0 bg-white flex flex-col">
                     <div className="sticky top-0 z-10 bg-white">
-                      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                      <div className="px-3 py-2 border-b border-slate-200 flex items-center justify-between">
                         <div className="flex gap-2">
                           <button
                             onClick={() => runCode("run")}
                             disabled={runLoading}
-                            className="px-3 py-2 rounded-xl text-sm font-semibold bg-slate-100 border border-slate-200 hover:bg-slate-200 disabled:opacity-60"
+                            className="px-2.5 py-1.5 rounded-lg text-[12px] font-semibold bg-slate-100 border border-slate-200 hover:bg-slate-200 disabled:opacity-60"
                           >
                             {runLoading ? "Running..." : "Run"}
                           </button>
                           <button
                             onClick={() => runCode("submit")}
                             disabled={runLoading}
-                            className="px-3 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60"
+                            className="px-2.5 py-1.5 rounded-lg text-[12px] font-semibold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60"
                           >
                             {runLoading ? "Submitting..." : "Submit"}
                           </button>
                         </div>
 
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[10px] text-slate-500">
                           {activeTC?.name ? (
                             <>
                               Active: <span className="font-mono text-slate-800">{activeTC.name}</span>
@@ -581,7 +582,7 @@ export default function Home() {
                         </div>
                       </div>
 
-                      <div className="flex border-b border-slate-200 text-xs">
+                      <div className="flex border-b border-slate-200 text-[12px]">
                         <Tab active={activeTab === "testcases"} onClick={() => setActiveTab("testcases")}>
                           Testcases
                         </Tab>
@@ -591,11 +592,11 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 overflow-y-auto p-4 text-sm">
+                    <div className="flex-1 min-h-0 overflow-y-auto p-3 text-[13px]">
                       {activeTab === "testcases" ? (
                         testCases.length > 0 ? (
-                          <div className="space-y-3">
-                            <div className="flex gap-2 flex-wrap">
+                          <div className="space-y-2.5">
+                            <div className="flex gap-1.5 flex-wrap">
                               {testCases.map((tc, idx) => (
                                 <Pill
                                   key={`${tc.name || "case"}-${idx}`}
@@ -608,21 +609,23 @@ export default function Home() {
                             </div>
 
                             <Block title="Example Input">{activeTC?.input || "// missing input"}</Block>
-                            <Block title="Expected Output">{activeTC?.expectedOutput || "// missing expected"}</Block>
+                            <Block title="Expected Output">
+                              {activeTC?.expectedOutput || "// missing expected"}
+                            </Block>
 
                             {activeTC?.explanation && (
-                              <div className="rounded-xl bg-slate-50 border border-slate-200 p-3">
-                                <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                              <div className="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
+                                <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">
                                   Explanation
                                 </div>
-                                <p className="mt-1 text-sm text-slate-700 leading-relaxed">
+                                <p className="mt-1 text-[13px] text-slate-700 leading-snug">
                                   {activeTC.explanation}
                                 </p>
                               </div>
                             )}
                           </div>
                         ) : (
-                          <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm text-amber-900">
+                          <div className="rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-[13px] text-amber-900">
                             No testcases returned.
                           </div>
                         )
@@ -636,15 +639,15 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="h-full grid place-items-center px-4">
-            <div className="max-w-xl w-full rounded-2xl bg-white border border-slate-200 p-6 text-center">
-              <div className="text-lg font-extrabold tracking-tight">Ready when you are.</div>
-              <p className="text-sm text-slate-600 mt-2">
+          <div className="h-full grid place-items-center px-3">
+            <div className="max-w-xl w-full rounded-2xl bg-white border border-slate-200 p-5 text-center">
+              <div className="text-base font-extrabold tracking-tight">Ready when you are.</div>
+              <p className="text-[13px] text-slate-600 mt-2">
                 Expand the header to paste a docs URL and generate questions.
               </p>
               <button
                 onClick={() => setHeaderCollapsed(false)}
-                className="mt-4 inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-500"
+                className="mt-3 inline-flex items-center justify-center rounded-lg px-3.5 py-1.5 text-[12px] font-semibold bg-indigo-600 text-white hover:bg-indigo-500"
               >
                 Add docs URL
               </button>
@@ -669,7 +672,7 @@ export default function Home() {
 function OutputPanel({ runResult }) {
   if (!runResult) {
     return (
-      <div className="rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-700">
+      <div className="rounded-xl bg-slate-50 border border-slate-200 p-2.5 text-[13px] text-slate-700">
         Press <span className="font-bold">Run</span> or <span className="font-bold">Submit</span> to see results.
       </div>
     );
@@ -677,48 +680,46 @@ function OutputPanel({ runResult }) {
 
   if (runResult.error) {
     return (
-      <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-900">
+      <div className="rounded-xl bg-rose-50 border border-rose-200 p-2.5 text-[13px] text-rose-900">
         {runResult.error}
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       <div
         className={[
-          "rounded-xl border p-3 text-sm",
+          "rounded-xl border p-2.5 text-[13px]",
           runResult.allPassed
             ? "bg-emerald-50 border-emerald-200 text-emerald-900"
             : "bg-amber-50 border-amber-200 text-amber-900",
         ].join(" ")}
       >
-        <div className="font-bold">
-          {runResult.allPassed ? "All tests passed ✅" : "Some tests failed ⚠️"}
-        </div>
-        <div className="text-[13px] mt-1">
+        <div className="font-bold">{runResult.allPassed ? "All tests passed ✅" : "Some tests failed ⚠️"}</div>
+        <div className="text-[12px] mt-1">
           {runResult.passedCount}/{runResult.total} passed • {runResult.totalRuntimeMs ?? 0}ms
         </div>
-        <div className="text-[11px] text-slate-600 mt-1">
+        <div className="text-[10px] text-slate-600 mt-1">
           Mode: <span className="font-mono">{runResult.mode}</span>
         </div>
       </div>
 
       <div className="space-y-2">
         {(runResult.results || []).map((r, idx) => (
-          <div key={idx} className="rounded-xl bg-white border border-slate-200 p-3">
+          <div key={idx} className="rounded-xl bg-white border border-slate-200 p-2.5">
             <div className="flex items-center justify-between gap-2">
-              <div className="font-semibold">
+              <div className="font-semibold text-[13px]">
                 {r.name}{" "}
                 {r.hidden ? (
-                  <span className="ml-2 text-[11px] px-2 py-0.5 rounded-full border bg-slate-50 border-slate-200 text-slate-600">
+                  <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full border bg-slate-50 border-slate-200 text-slate-600">
                     hidden
                   </span>
                 ) : null}
               </div>
               <span
                 className={[
-                  "text-[11px] font-bold px-2 py-1 rounded-full border",
+                  "text-[10px] font-bold px-2 py-0.5 rounded-full border",
                   r.passed
                     ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                     : "bg-rose-50 border-rose-200 text-rose-700",
@@ -728,20 +729,20 @@ function OutputPanel({ runResult }) {
               </span>
             </div>
 
-            <div className="mt-1 text-[11px] text-slate-500">
+            <div className="mt-1 text-[10px] text-slate-500">
               exit={r.exitCode} • {r.runtimeMs ?? 0}ms
             </div>
 
             <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
               <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">Expected</div>
-                <pre className="rounded-lg bg-slate-50 border border-slate-200 p-2 font-mono text-xs whitespace-pre-wrap">
+                <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">Expected</div>
+                <pre className="rounded-lg bg-slate-50 border border-slate-200 p-2 font-mono text-[11px] whitespace-pre-wrap">
                   {r.expectedOutput ?? ""}
                 </pre>
               </div>
               <div>
-                <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">Actual</div>
-                <pre className="rounded-lg bg-slate-50 border border-slate-200 p-2 font-mono text-xs whitespace-pre-wrap">
+                <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">Actual</div>
+                <pre className="rounded-lg bg-slate-50 border border-slate-200 p-2 font-mono text-[11px] whitespace-pre-wrap">
                   {r.actualOutput ?? ""}
                 </pre>
               </div>
@@ -749,8 +750,8 @@ function OutputPanel({ runResult }) {
 
             {r.stderr ? (
               <div className="mt-2">
-                <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">Error</div>
-                <pre className="rounded-lg bg-rose-50 border border-rose-200 p-2 font-mono text-xs whitespace-pre-wrap text-rose-900">
+                <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">Error</div>
+                <pre className="rounded-lg bg-rose-50 border border-rose-200 p-2 font-mono text-[11px] whitespace-pre-wrap text-rose-900">
                   {r.stderr}
                 </pre>
               </div>
@@ -767,7 +768,7 @@ function Tab({ active, onClick, children }) {
     <button
       onClick={onClick}
       className={[
-        "px-4 py-2 font-semibold border-r border-slate-200",
+        "px-3 py-1.5 text-[12px] font-semibold border-r border-slate-200",
         active ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500 hover:bg-slate-100",
       ].join(" ")}
     >
@@ -781,7 +782,7 @@ function Pill({ active, onClick, children }) {
     <button
       onClick={onClick}
       className={[
-        "px-3 py-1.5 rounded-full text-xs font-semibold border",
+        "px-2.5 py-1 rounded-full text-[11px] font-semibold border",
         active
           ? "bg-slate-900 text-white border-slate-900"
           : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50",
@@ -795,8 +796,8 @@ function Pill({ active, onClick, children }) {
 function Block({ title, children }) {
   return (
     <div className="space-y-1">
-      <div className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
-      <pre className="rounded-xl bg-slate-50 border border-slate-200 p-3 font-mono text-xs text-slate-800 whitespace-pre-wrap">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
+      <pre className="rounded-xl bg-slate-50 border border-slate-200 p-2 font-mono text-[11px] text-slate-800 whitespace-pre-wrap">
         {children}
       </pre>
     </div>
