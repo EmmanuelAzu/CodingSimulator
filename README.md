@@ -45,5 +45,5 @@ Paste a docs URL, generate questions, write code, run test cases, and submit —
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/your-username/codingsim.git
+git clone https://github.com/EmmanuelAzu/CodingSimulator.git
 cd codingsim
